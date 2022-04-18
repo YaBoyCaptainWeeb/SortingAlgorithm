@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static SortingAlgorithm.Visualization;
+using SortingAlgorithm.Charts;
 
 namespace SortingAlgorithm
 {
@@ -27,19 +27,8 @@ namespace SortingAlgorithm
         }
         private void insertionSorting(object sender, EventArgs Click)
         {
-            int[] data = new int[toSortArray.Count];
             int i;
-            //MessageBox.Show(Convert.ToString(toSortArray.Count));
-            for (i = 0; i < data.Length; i++)
-            {
-                if (toSortArray[i] != " ")
-                {
-                    data[i] = Convert.ToInt32(toSortArray[i]);
-                    MessageBox.Show(Convert.ToString(data[i]));
-                }
-            }
-            FirstScene(data);
-            //MessageBox.Show(Convert.ToString(data.Length));
+            int[] data = ConvertData(toSortArray);
             int loc, j, selected;
             for (i = 1; i < data.Length; i++)
             {
@@ -55,6 +44,11 @@ namespace SortingAlgorithm
                 }
                 data[loc] = selected;
             }
+            GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
+            Chart chart = new Visualization();
+            GridForChart.Children.Add(chart.ChartBackground);
+            GridForChart.UpdateLayout();
+            CreateChart(chart, data);
             WriteDownResult(data);
         }
         private int BinarySearch(int[] data, int item, int low, int high)
@@ -81,14 +75,13 @@ namespace SortingAlgorithm
             SaveFileDialog newFile = new SaveFileDialog();
             newFile.Title = "Сохранить файл как...";
             newFile.Filter = "Текстовый файл (*.txt) | *.txt";
-            newFile.ShowDialog();
-            for (int i = 0; i != data.Length; i++)
+            if (newFile.ShowDialog() == true)
             {
-                text[i] = Convert.ToString(data[i]);
-            }
-            if (newFile.FileName != null)
-            {
-                File.WriteAllLines(newFile.FileName, text);
+                for (int i = 0; i != data.Length; i++)
+                {
+                    text[i] = Convert.ToString(data[i]);
+                }
+                    File.WriteAllLines(newFile.FileName, text);
             }
         }
         private void OpenFile(object sender, EventArgs Click)
@@ -98,22 +91,54 @@ namespace SortingAlgorithm
             OpenFileDialog Conductor = new OpenFileDialog();
             Conductor.Title = "Выберите файл с данными";
             Conductor.Filter = "Текстовый файл (*.txt) | *.txt";
-            Conductor.ShowDialog();
-            textFromFile = File.ReadAllText(Conductor.FileName, Encoding.UTF8);
-            LoadedData.Text = textFromFile;
-            // int j = 0;
-            for (int i = 0; i != textFromFile.Length; i++)
+            if (Conductor.ShowDialog() == true)
             {
-                if (textFromFile[i] == '\n' || textFromFile[i] == '\0')
+                textFromFile = File.ReadAllText(Conductor.FileName, Encoding.UTF8);
+                LoadedData.Text = textFromFile;
+                for (int i = 0; i != textFromFile.Length; i++)
                 {
-                    toSortArray.Add(singleLine);
-                    //MessageBox.Show(toSortArray[j]);
-                    //j++;
-                    singleLine = "";
-                    continue;
+                    if (textFromFile[i] == '\n' || textFromFile[i] == '\0')
+                    {
+                        toSortArray.Add(singleLine);
+                        singleLine = "";
+                        continue;
+                    }
+                    singleLine += textFromFile[i];
                 }
-                singleLine += textFromFile[i];
             }
+            // Обращение к визуализации
+            GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
+            Chart chart = new Visualization();
+            GridForChart.Children.Add(chart.ChartBackground);
+            GridForChart.UpdateLayout();
+            CreateChart(chart,ConvertData(toSortArray));
+        }
+        private static void CreateChart(Chart chart, int[] List)
+        {
+            chart.Clear();
+            List<int> list = new List<int>();
+            for (int i = 0; i != List.Length; i++)
+            {
+                list.Add(List[i]);
+                //MessageBox.Show(Convert.ToString(List[i]), "Визуализация");
+            }
+            for (int i = 0; i != list.Count; i++)
+            {
+                chart.AddValue(list[i]);
+            }
+        }
+        public int[] ConvertData(List<string> toConvertArr)
+        {
+            int[] data = new int[toSortArray.Count];
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (toConvertArr[i] != "\n" && toConvertArr[i] != " ")
+                {
+                    data[i] = Convert.ToInt32(toConvertArr[i]);
+                    //MessageBox.Show(Convert.ToString(data[i]));
+                }
+            }
+            return data;
         }
         private void ShowInfo(object sender, EventArgs Click)
         {

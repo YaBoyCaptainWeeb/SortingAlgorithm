@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetProjects.WpfToolkit.DataVisualization" Version="6.1.94" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Icon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
