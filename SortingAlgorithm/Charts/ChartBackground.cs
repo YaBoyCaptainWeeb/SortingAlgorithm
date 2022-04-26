@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -11,8 +6,9 @@ namespace SortingAlgorithm.Charts
 {
     internal class ChartBackground : Grid
     {
-        private SolidColorBrush bg = new(Color.FromArgb(255, 180, 200, 180));
+       /* private SolidColorBrush bg = new(Color.FromArgb(255, 180, 200, 180));
         private Grid grid = new();
+       */
         private Grid paddinggrid = new();
 
         public UIElementCollection ChartItems
@@ -24,7 +20,6 @@ namespace SortingAlgorithm.Charts
             Background = new SolidColorBrush(Color.FromArgb(150, 190, 220, 190));
             Children.Add(paddinggrid);
             paddinggrid.Margin = new(0);
-            //DrawLine();
         }
         public void DrawLine()
         {

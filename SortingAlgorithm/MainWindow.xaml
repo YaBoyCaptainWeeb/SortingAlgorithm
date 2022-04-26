@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=DotNetProjects.DataVisualization.Toolkit"
+        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
         xmlns:local="clr-namespace:SortingAlgorithm"
         mc:Ignorable="d"
-        Title="Алгоритм сортировки бинарными вставками" Height="450" MinWidth="800" Width="800"  Background="#FBFBFC" ResizeMode="CanResizeWithGrip" Icon="./Icon.png">
+        Title="Алгоритм сортировки бинарными вставками" Height="450" MinWidth="800" Width="800"  Background="#FBFBFC" ResizeMode="CanMinimize" Icon="./Icon.png">
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -23,10 +23,14 @@
             <Border Background="GhostWhite" BorderBrush="Gainsboro" BorderThickness="0.3" >
                 <TextBox Height="350" Width="175" Margin="0 0 0 5" x:Name="LoadedData" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
             </Border>
-            <Button Click="insertionSorting" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="150" VerticalAlignment="Bottom" Margin="0 0 0 5" Content="Начать сортировку"/>
+            <StackPanel Orientation="Horizontal">
+            <Button x:Name="StartBtn" Click="insertionSorting" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="155"  Margin="15 0 0 5" Content="Начать сортировать" IsEnabled="False" Visibility="Visible"/>
+            <Button x:Name="BackBtn" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="75" Margin="10 0 0 5"  Content="Назад" Visibility="Collapsed" IsEnabled="False" Click="BackWards" />
+            <Button x:Name="NextBtn" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="75" Margin="10 0 0 5"  Content="Вперед" Visibility="Collapsed" IsEnabled="False" />
+            </StackPanel>
         </StackPanel>
         <Grid Grid.Column="1" x:Name="GridForChart" Background="GhostWhite" Height="380" VerticalAlignment="Top" Margin="0 20 0 0">
-
+            
         </Grid>
     </Grid>
 </Window>

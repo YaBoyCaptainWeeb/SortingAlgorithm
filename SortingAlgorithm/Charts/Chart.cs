@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls.DataVisualization.Charting;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -17,7 +11,7 @@ namespace SortingAlgorithm.Charts
         protected readonly double PaddingChart = 10;
         protected double WidthChart;
         protected double HeightChart;
-        public readonly Canvas ChartBackground = new();
+        public readonly Canvas ChartBackground = new Canvas();
     public Chart()
         {
             ChartBackground.Margin = new Thickness(0);

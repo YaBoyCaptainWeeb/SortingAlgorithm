@@ -15,41 +15,68 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SortingAlgorithm.Charts;
+using System.Threading;
+
 
 namespace SortingAlgorithm
 {
     public partial class MainWindow : Window
     {
+        int i = 1;
+        int[] data;
+        int loc, j, selected;
         List<string> toSortArray = new List<string>();
+        List<List<int>> History = new List<List<int>>();
         public MainWindow()
         {
             InitializeComponent();
         }
         private void insertionSorting(object sender, EventArgs Click)
         {
-            int i;
-            int[] data = ConvertData(toSortArray);
-            int loc, j, selected;
-            for (i = 1; i < data.Length; i++)
+            if (StartBtn.Visibility == Visibility.Visible)
             {
-                j = i - 1;
-                selected = data[i];
-
-                loc = BinarySearch(data, selected, 0, j); // вызов бинарного поиска для текущего элемента в массиве
-
-                while (j >= loc)
-                {
-                    data[j + 1] = data[j];
-                    j--;
-                }
-                data[loc] = selected;
+                StartBtn.Visibility = Visibility.Collapsed;
+                BackBtn.IsEnabled = true;
+                NextBtn.IsEnabled = true;
+                BackBtn.Visibility = Visibility.Visible;
+                NextBtn.Visibility = Visibility.Visible;
+                StartBtn.IsEnabled = false;
+                NextBtn.Click += insertionSorting;
             }
-            GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
-            Chart chart = new Visualization();
-            GridForChart.Children.Add(chart.ChartBackground);
-            GridForChart.UpdateLayout();
-            CreateChart(chart, data);
-            WriteDownResult(data);
+                if (i < data.Length)
+                {
+                History.Add(new List<int>());
+                foreach (var item in data)
+                {
+                    History[i-1].Add(item);
+                }
+                j = i - 1;
+                    selected = data[i];
+
+                    loc = BinarySearch(data, selected, 0, j); // вызов бинарного поиска для текущего элемента в массиве
+
+                    while (j >= loc)
+                    {
+                        data[j + 1] = data[j];
+                        j--;
+                    }
+                    data[loc] = selected;
+                    i++;
+                    GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
+                    Chart chart = new Visualization();
+                    GridForChart.Children.Add(chart.ChartBackground);
+                    GridForChart.UpdateLayout();
+                    CreateChart(chart, data);
+                }
+                else
+                {
+                History.Add(new List<int>());
+                foreach (var item in data)
+                {
+                    History[i - 1].Add(item);
+                }
+                    WriteDownResult(data);
+                }
         }
         private int BinarySearch(int[] data, int item, int low, int high)
         {
@@ -69,6 +96,23 @@ namespace SortingAlgorithm
             return BinarySearch(data, item, low, mid - 1);
 
         }
+        private void BackWards(object sender, EventArgs Click)
+        {
+            int[] toSendData = new int[History[i-2].Count];
+            for (int j = 0; j != History[i - 2].Count; j++)
+            {
+                toSendData[j] = History[i - 2][j];
+            }
+            GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
+            Chart chart = new Visualization();
+            GridForChart.Children.Add(chart.ChartBackground);
+            GridForChart.UpdateLayout();
+            CreateChart(chart, toSendData);
+        }
+        private void Forward(object sender, EventArgs Click)
+        {
+
+        }
         private void WriteDownResult(int[] data)
         {
             string[] text = new string[data.Length];
@@ -81,8 +125,14 @@ namespace SortingAlgorithm
                 {
                     text[i] = Convert.ToString(data[i]);
                 }
-                    File.WriteAllLines(newFile.FileName, text);
-            }
+                File.WriteAllLines(newFile.FileName, text);
+                StartBtn.IsEnabled = true;
+                StartBtn.Visibility = Visibility.Visible;
+                BackBtn.Visibility = Visibility.Collapsed;
+                NextBtn.Visibility = Visibility.Collapsed;
+                BackBtn.IsEnabled = false;
+                NextBtn.IsEnabled = false;
+            }            
         }
         private void OpenFile(object sender, EventArgs Click)
         {
@@ -105,13 +155,15 @@ namespace SortingAlgorithm
                     }
                     singleLine += textFromFile[i];
                 }
+                data = ConvertData(toSortArray);
+                StartBtn.IsEnabled = true;
+                // Обращение к визуализации
+                GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
+                Chart chart = new Visualization();
+                GridForChart.Children.Add(chart.ChartBackground);
+                GridForChart.UpdateLayout();
+                CreateChart(chart, ConvertData(toSortArray));
             }
-            // Обращение к визуализации
-            GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
-            Chart chart = new Visualization();
-            GridForChart.Children.Add(chart.ChartBackground);
-            GridForChart.UpdateLayout();
-            CreateChart(chart,ConvertData(toSortArray));
         }
         private static void CreateChart(Chart chart, int[] List)
         {
