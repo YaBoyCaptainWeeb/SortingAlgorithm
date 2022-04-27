@@ -17,6 +17,7 @@
         </Grid.ColumnDefinitions>
         <Menu Grid.ColumnSpan="2" Height="20" VerticalAlignment="Top" FontSize="14px" Background="White" FontFamily="Roboto">
             <MenuItem Header="Открыть файл" Click="OpenFile" />
+            <MenuItem x:Name="EndBtn" IsEnabled="False" Header="Закончить демонстрацию" Click="EndDemonstration" />
             <MenuItem Header="О программе" Click="ShowInfo" />
         </Menu>
         <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
@@ -26,7 +27,7 @@
             <StackPanel Orientation="Horizontal">
             <Button x:Name="StartBtn" Click="insertionSorting" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="155"  Margin="15 0 0 5" Content="Начать сортировать" IsEnabled="False" Visibility="Visible"/>
             <Button x:Name="BackBtn" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="75" Margin="10 0 0 5"  Content="Назад" Visibility="Collapsed" IsEnabled="False" Click="BackWards" />
-            <Button x:Name="NextBtn" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="75" Margin="10 0 0 5"  Content="Вперед" Visibility="Collapsed" IsEnabled="False" />
+            <Button x:Name="NextBtn" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="75" Margin="10 0 0 5"  Content="Вперед" Visibility="Collapsed" IsEnabled="False" Click="Forward" />
             </StackPanel>
         </StackPanel>
         <Grid Grid.Column="1" x:Name="GridForChart" Background="GhostWhite" Height="380" VerticalAlignment="Top" Margin="0 20 0 0">

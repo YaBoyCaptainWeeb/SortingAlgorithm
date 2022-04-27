@@ -22,9 +22,7 @@ namespace SortingAlgorithm
 {
     public partial class MainWindow : Window
     {
-        int i = 1;
-        int[] data;
-        int loc, j, selected;
+        int index, writtenDownAlready = 0;
         List<string> toSortArray = new List<string>();
         List<List<int>> History = new List<List<int>>();
         public MainWindow()
@@ -41,9 +39,11 @@ namespace SortingAlgorithm
                 BackBtn.Visibility = Visibility.Visible;
                 NextBtn.Visibility = Visibility.Visible;
                 StartBtn.IsEnabled = false;
-                NextBtn.Click += insertionSorting;
+                EndBtn.IsEnabled = true;
             }
-                if (i < data.Length)
+            int[] data = ConvertData(toSortArray);
+            int loc, j, selected;
+            for (int i = 1; i < data.Length; i++)
                 {
                 History.Add(new List<int>());
                 foreach (var item in data)
@@ -55,28 +55,24 @@ namespace SortingAlgorithm
 
                     loc = BinarySearch(data, selected, 0, j); // вызов бинарного поиска для текущего элемента в массиве
 
-                    while (j >= loc)
+                     while (j >= loc)
                     {
                         data[j + 1] = data[j];
                         j--;
                     }
-                    data[loc] = selected;
-                    i++;
-                    GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
-                    Chart chart = new Visualization();
-                    GridForChart.Children.Add(chart.ChartBackground);
-                    GridForChart.UpdateLayout();
-                    CreateChart(chart, data);
+                    data[loc] = selected;          
                 }
-                else
-                {
-                History.Add(new List<int>());
-                foreach (var item in data)
-                {
-                    History[i - 1].Add(item);
-                }
-                    WriteDownResult(data);
-                }
+            History.Add(new List<int>());
+            foreach (var item in data)
+            {
+                History[data.Length-1].Add(item);
+            }
+            MessageBoxResult res = MessageBox.Show("Хотите записать результат в файл заранее?", "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (res == MessageBoxResult.Yes)
+            {
+                WriteDownResult(data);
+                writtenDownAlready = 1;
+            }
         }
         private int BinarySearch(int[] data, int item, int low, int high)
         {
@@ -98,20 +94,152 @@ namespace SortingAlgorithm
         }
         private void BackWards(object sender, EventArgs Click)
         {
-            int[] toSendData = new int[History[i-2].Count];
-            for (int j = 0; j != History[i - 2].Count; j++)
+            int[] toUpdateData = new int[History.Count];
+            if (index > 0)
             {
-                toSendData[j] = History[i - 2][j];
+                for (int i = 0; i < toUpdateData.Length; i++)
+                {
+                    toUpdateData[i] = History[index - 1][i];
+                }
+                index--;
+                GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
+                Chart chart = new Visualization();
+                GridForChart.Children.Add(chart.ChartBackground);
+                GridForChart.UpdateLayout();
+                CreateChart(chart, toUpdateData);
+            } else
+            {
+               MessageBoxResult res =  MessageBox.Show("График находится на начальном этапе сортировки" 
+                    , "Конец"
+                    , MessageBoxButton.OK
+                    , MessageBoxImage.Hand);
             }
-            GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
-            Chart chart = new Visualization();
-            GridForChart.Children.Add(chart.ChartBackground);
-            GridForChart.UpdateLayout();
-            CreateChart(chart, toSendData);
+            
         }
         private void Forward(object sender, EventArgs Click)
         {
-
+            int[] toUpdateData = new int[History.Count];
+            if (index + 1 < History.Count)
+            {
+                for (int i = 0; i < toUpdateData.Length; i++)
+                {
+                    toUpdateData[i] = History[index + 1][i];
+                }
+                index++;
+                GridForChart.Children.Clear();
+                Chart chart = new Visualization();
+                GridForChart.Children.Add(chart.ChartBackground);
+                GridForChart.UpdateLayout();
+                CreateChart(chart, toUpdateData);
+            } else
+            {
+                MessageBoxResult res = MessageBox.Show("График находится на конечном этапе сортировки"
+                    + "\n" + "Хотите закончить демонстрацию?"
+                    , "Конец"
+                    , MessageBoxButton.YesNo
+                    , MessageBoxImage.Hand);
+                if (res == MessageBoxResult.Yes && writtenDownAlready == 0)
+                {
+                    MessageBoxResult res1 = MessageBox.Show("Хотите записать результат в файл?"
+                        , "Запрос"
+                        , MessageBoxButton.YesNo
+                        , MessageBoxImage.Question);
+                    if (res1 == MessageBoxResult.Yes)
+                    {
+                        for (int i = 0; i < toUpdateData.Length; i++)
+                        {
+                            toUpdateData[i] = History[index][i];
+                        }
+                        WriteDownResult(toUpdateData);
+                        StartBtn.IsEnabled = false;
+                        StartBtn.Visibility = Visibility.Visible;
+                        BackBtn.Visibility = Visibility.Collapsed;
+                        NextBtn.Visibility = Visibility.Collapsed;
+                        EndBtn.IsEnabled = false;
+                        LoadedData.Text = "";
+                        index = 0;
+                        History.Clear();
+                        GridForChart.Children.Clear();
+                    } else
+                    {
+                        StartBtn.IsEnabled = false;
+                        StartBtn.Visibility = Visibility.Visible;
+                        BackBtn.Visibility = Visibility.Collapsed;
+                        NextBtn.Visibility = Visibility.Collapsed;
+                        EndBtn.IsEnabled = false;
+                        LoadedData.Text = "";
+                        index = 0;
+                        History.Clear();
+                        GridForChart.Children.Clear();
+                    }
+                }
+                else
+                {
+                    StartBtn.IsEnabled = false;
+                    StartBtn.Visibility = Visibility.Visible;
+                    BackBtn.Visibility = Visibility.Collapsed;
+                    NextBtn.Visibility = Visibility.Collapsed;
+                    EndBtn.IsEnabled = false;
+                    LoadedData.Text = "";
+                    index = 0;
+                    History.Clear();
+                    GridForChart.Children.Clear();
+                }
+            }
+        }
+        private void EndDemonstration(object sender, EventArgs e)
+        {
+            int[] toUpdateData = new int[History.Count];
+            MessageBoxResult res = MessageBox.Show("Хотите закончить демонстрацию?"
+                   , "Запрос"
+                   , MessageBoxButton.YesNo
+                   , MessageBoxImage.Hand);
+            if (res == MessageBoxResult.Yes && writtenDownAlready == 0)
+            {
+                MessageBoxResult res1 = MessageBox.Show("Хотите записать результат в файл?"
+                    , "Запрос"
+                    , MessageBoxButton.YesNo
+                    , MessageBoxImage.Question);
+                if (res1 == MessageBoxResult.Yes)
+                {
+                    for (int i = 0; i < toUpdateData.Length; i++)
+                    {
+                        toUpdateData[i] = History[index][i];
+                    }
+                    WriteDownResult(toUpdateData);
+                    StartBtn.IsEnabled = false;
+                    StartBtn.Visibility = Visibility.Visible;
+                    BackBtn.Visibility = Visibility.Collapsed;
+                    NextBtn.Visibility = Visibility.Collapsed;
+                    EndBtn.IsEnabled = false;
+                    index = 0;
+                    History.Clear();
+                    GridForChart.Children.Clear();
+                } else
+                {
+                    StartBtn.IsEnabled = false;
+                    StartBtn.Visibility = Visibility.Visible;
+                    BackBtn.Visibility = Visibility.Collapsed;
+                    NextBtn.Visibility = Visibility.Collapsed;
+                    EndBtn.IsEnabled = false;
+                    LoadedData.Text = "";
+                    index = 0;
+                    History.Clear();
+                    GridForChart.Children.Clear();
+                }
+            }
+            else
+            {
+                StartBtn.IsEnabled = false;
+                StartBtn.Visibility = Visibility.Visible;
+                BackBtn.Visibility = Visibility.Collapsed;
+                NextBtn.Visibility = Visibility.Collapsed;
+                EndBtn.IsEnabled = false;
+                LoadedData.Text = "";
+                index = 0;
+                History.Clear();
+                GridForChart.Children.Clear();
+            }
         }
         private void WriteDownResult(int[] data)
         {
@@ -126,12 +254,6 @@ namespace SortingAlgorithm
                     text[i] = Convert.ToString(data[i]);
                 }
                 File.WriteAllLines(newFile.FileName, text);
-                StartBtn.IsEnabled = true;
-                StartBtn.Visibility = Visibility.Visible;
-                BackBtn.Visibility = Visibility.Collapsed;
-                NextBtn.Visibility = Visibility.Collapsed;
-                BackBtn.IsEnabled = false;
-                NextBtn.IsEnabled = false;
             }            
         }
         private void OpenFile(object sender, EventArgs Click)
@@ -155,10 +277,12 @@ namespace SortingAlgorithm
                     }
                     singleLine += textFromFile[i];
                 }
-                data = ConvertData(toSortArray);
                 StartBtn.IsEnabled = true;
+                StartBtn.Visibility = Visibility.Visible;
+                BackBtn.Visibility = Visibility.Collapsed;
+                NextBtn.Visibility = Visibility.Collapsed;
                 // Обращение к визуализации
-                GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
+                GridForChart.Children.Clear();
                 Chart chart = new Visualization();
                 GridForChart.Children.Add(chart.ChartBackground);
                 GridForChart.UpdateLayout();
@@ -172,7 +296,6 @@ namespace SortingAlgorithm
             for (int i = 0; i != List.Length; i++)
             {
                 list.Add(List[i]);
-                //MessageBox.Show(Convert.ToString(List[i]), "Визуализация");
             }
             for (int i = 0; i != list.Count; i++)
             {
