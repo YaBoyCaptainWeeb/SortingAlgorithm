@@ -151,41 +151,18 @@ namespace SortingAlgorithm
                             toUpdateData[i] = History[index][i];
                         }
                         WriteDownResult(toUpdateData);
-                        StartBtn.IsEnabled = false;
-                        StartBtn.Visibility = Visibility.Visible;
-                        BackBtn.Visibility = Visibility.Collapsed;
-                        NextBtn.Visibility = Visibility.Collapsed;
-                        EndBtn.IsEnabled = false;
-                        LoadedData.Text = "";
-                        index = 0;
-                        History.Clear();
-                        GridForChart.Children.Clear();
-                    } else
-                    {
-                        StartBtn.IsEnabled = false;
-                        StartBtn.Visibility = Visibility.Visible;
-                        BackBtn.Visibility = Visibility.Collapsed;
-                        NextBtn.Visibility = Visibility.Collapsed;
-                        EndBtn.IsEnabled = false;
-                        LoadedData.Text = "";
-                        index = 0;
-                        History.Clear();
-                        GridForChart.Children.Clear();
+                        ResetData();
                     }
-                }
-                else
+                    else
+                    {
+                        ResetData();
+                    }
+                } else
                 {
-                    StartBtn.IsEnabled = false;
-                    StartBtn.Visibility = Visibility.Visible;
-                    BackBtn.Visibility = Visibility.Collapsed;
-                    NextBtn.Visibility = Visibility.Collapsed;
-                    EndBtn.IsEnabled = false;
-                    LoadedData.Text = "";
-                    index = 0;
-                    History.Clear();
-                    GridForChart.Children.Clear();
+                    ResetData();
                 }
-            }
+
+            } 
         }
         private void EndDemonstration(object sender, EventArgs e)
         {
@@ -207,39 +184,28 @@ namespace SortingAlgorithm
                         toUpdateData[i] = History[index][i];
                     }
                     WriteDownResult(toUpdateData);
-                    StartBtn.IsEnabled = false;
-                    StartBtn.Visibility = Visibility.Visible;
-                    BackBtn.Visibility = Visibility.Collapsed;
-                    NextBtn.Visibility = Visibility.Collapsed;
-                    EndBtn.IsEnabled = false;
-                    index = 0;
-                    History.Clear();
-                    GridForChart.Children.Clear();
+                    ResetData();
                 } else
                 {
-                    StartBtn.IsEnabled = false;
-                    StartBtn.Visibility = Visibility.Visible;
-                    BackBtn.Visibility = Visibility.Collapsed;
-                    NextBtn.Visibility = Visibility.Collapsed;
-                    EndBtn.IsEnabled = false;
-                    LoadedData.Text = "";
-                    index = 0;
-                    History.Clear();
-                    GridForChart.Children.Clear();
+                    ResetData();
                 }
             }
             else
             {
-                StartBtn.IsEnabled = false;
-                StartBtn.Visibility = Visibility.Visible;
-                BackBtn.Visibility = Visibility.Collapsed;
-                NextBtn.Visibility = Visibility.Collapsed;
-                EndBtn.IsEnabled = false;
-                LoadedData.Text = "";
-                index = 0;
-                History.Clear();
-                GridForChart.Children.Clear();
+                ResetData();
             }
+        }
+        public void ResetData()
+        {
+            StartBtn.IsEnabled = false;
+            StartBtn.Visibility = Visibility.Visible;
+            BackBtn.Visibility = Visibility.Collapsed;
+            NextBtn.Visibility = Visibility.Collapsed;
+            EndBtn.IsEnabled = false;
+            LoadedData.Text = "";
+            index = 0;
+            History.Clear();
+            GridForChart.Children.Clear();
         }
         private void WriteDownResult(int[] data)
         {
