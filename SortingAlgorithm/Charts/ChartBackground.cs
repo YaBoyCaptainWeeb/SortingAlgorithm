@@ -4,6 +4,7 @@ using System.Windows.Shapes;
 
 namespace SortingAlgorithm.Charts
 {
+    // Внутренний класс, описывающий отрисовку заднего фона
     internal class ChartBackground : Grid
     {
        /* private SolidColorBrush bg = new(Color.FromArgb(255, 180, 200, 180));

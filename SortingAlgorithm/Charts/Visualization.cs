@@ -14,13 +14,50 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SortingAlgorithm;
 
 namespace SortingAlgorithm.Charts
 {
     internal class Visualization : Chart
     {
+        public int[] green = new int[3] { 73, 245, 39 };
+        public int[] orange = new int[3] { 252, 194, 3 };
         private double gap = 5;
         public override void Clear() => ChartBackground.Children.Clear();
+        // Функция добавления объекта на диаграмму
+        public override void AddValue(int data, int[] comparable)
+        {
+            List<double> listValues = ChartBackground.Children.OfType<Rectangle>().Select(p => (double)p.Tag).ToList();
+            listValues.Add(data);
+            double WidthBar = (WidthChart - ((listValues.Count - 1) * gap)) / listValues.Count;
+            double MaxValue = listValues.Max();
+            double denominator = MaxValue / HeightChart;
+            
+            Clear();
+            for (int i = 0; i < listValues.Count; i++)
+            {
+                int count = ChartBackground.Children.OfType<Rectangle>().Count();
+                double heightPoint = listValues[i] / denominator;
+                if (heightPoint < 3)
+                {
+                    heightPoint = 3;
+                }
+                double x = (count * (WidthBar + gap)) + (ChartBackground.ActualWidth - WidthChart) / 2;
+                if (listValues[i] == comparable[i])
+                {
+                    Rectangle bar = CreateBar(x, heightPoint, WidthBar, listValues[i], green);
+                    _ = ChartBackground.Children.Add(bar);
+                    Label title = CreateTitle(x, bar.Height, WidthBar, listValues[i]);
+                    _ = ChartBackground.Children.Add(title);
+                } else
+                {
+                    Rectangle bar = CreateBar(x, heightPoint, WidthBar, listValues[i], orange);
+                    _ = ChartBackground.Children.Add(bar);
+                    Label title = CreateTitle(x, bar.Height, WidthBar, listValues[i]);
+                    _ = ChartBackground.Children.Add(title);
+                }
+            }
+        }
         public override void AddValue(int data)
         {
             List<double> listValues = ChartBackground.Children.OfType<Rectangle>().Select(p => (double)p.Tag).ToList();
@@ -28,7 +65,6 @@ namespace SortingAlgorithm.Charts
             double WidthBar = (WidthChart - ((listValues.Count - 1) * gap)) / listValues.Count;
             double MaxValue = listValues.Max();
             double denominator = MaxValue / HeightChart;
-
             Clear();
             foreach (double val in listValues)
             {
@@ -40,11 +76,10 @@ namespace SortingAlgorithm.Charts
                 }
                 double x = (count * (WidthBar + gap)) + (ChartBackground.ActualWidth - WidthChart) / 2;
 
-                Rectangle bar = CreateBar(x, heightPoint, WidthBar, val);
-                _ = ChartBackground.Children.Add(bar);
-
-                Label title = CreateTitle(x, bar.Height, WidthBar, val);
-                _ = ChartBackground.Children.Add(title);
+                    Rectangle bar = CreateBar(x, heightPoint, WidthBar, val, orange);
+                    _ = ChartBackground.Children.Add(bar);
+                    Label title = CreateTitle(x, bar.Height, WidthBar, val);
+                    _ = ChartBackground.Children.Add(title);
             }
         }
         /// <summary>
@@ -55,18 +90,18 @@ namespace SortingAlgorithm.Charts
         /// <param name="width">ширина</param>
         /// <param name="value">абсолютное значение</param>
         /// <returns></returns>
-        private Rectangle CreateBar(double x, double height, double width, double value)
+        private Rectangle CreateBar(double x, double height, double width, double value, int[] color)
         {
             Rectangle bar = new()
             {
                 Stroke = Brushes.Black,
-                Fill = new SolidColorBrush(Color.FromArgb(188, 212, 36, 1)),
+                Fill = new SolidColorBrush(Color.FromRgb(Convert.ToByte(color[0]), Convert.ToByte(color[1]), Convert.ToByte(color[2])))
+                ,
                 Height = height,
                 Width = width,
                 StrokeThickness = 0.5,
                 Tag = value
             };
-
             Canvas.SetLeft(bar, x);
             Canvas.SetBottom(bar, 0);
 

@@ -5,6 +5,7 @@ using System.Windows.Media;
 
 namespace SortingAlgorithm.Charts
 {
+    // Описание абстрактного класса Chart, который будет описывать столбчатую диаграмму
     internal abstract class Chart
     {
         private readonly double factor = 0.666666666666667;
@@ -23,6 +24,7 @@ namespace SortingAlgorithm.Charts
             HeightChart = e.NewSize.Height * factor;
             ChartBackground.Background = DrawLines(e.NewSize.Width, WidthChart, PaddingChart);
         }
+        public abstract void AddValue(int data, int[] comparable);
         public abstract void AddValue(int data);
         public abstract void Clear();
         private Brush DrawLines (double actualwidth, double widthchart, double padding)

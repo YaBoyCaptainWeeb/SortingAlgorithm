@@ -23,14 +23,18 @@ namespace SortingAlgorithm
     public partial class MainWindow : Window
     {
         int index, writtenDownAlready = 0;
+        public int[] green = new int[4] { 73, 245, 39, 1 };
+        public int[] orange = new int[4] { 188, 212, 36, 1};
         List<string> toSortArray = new List<string>();
-        List<List<int>> History = new List<List<int>>();
+        public List<List<int>> History = new List<List<int>>();
         public MainWindow()
         {
             InitializeComponent();
         }
+        // Сортировка прямыми вставками с бинарным поиском
         private void insertionSorting(object sender, EventArgs Click)
         {
+            // перевод интерфейса в состояние "слайдера"
             if (StartBtn.Visibility == Visibility.Visible)
             {
                 StartBtn.Visibility = Visibility.Collapsed;
@@ -41,6 +45,7 @@ namespace SortingAlgorithm
                 StartBtn.IsEnabled = false;
                 EndBtn.IsEnabled = true;
             }
+            // Вызов функции конвертации символьного массива в численный тип данных
             int[] data = ConvertData(toSortArray);
             int loc, j, selected;
             for (int i = 1; i < data.Length; i++)
@@ -75,6 +80,7 @@ namespace SortingAlgorithm
             }
         }
         private int BinarySearch(int[] data, int item, int low, int high)
+        // Функция бинарного поиска в сортировке прямыми вставками            
         {
             if (high <= low)
             {
@@ -92,7 +98,7 @@ namespace SortingAlgorithm
             return BinarySearch(data, item, low, mid - 1);
 
         }
-        private void BackWards(object sender, EventArgs Click)
+        private void BackWards(object sender, EventArgs Click) // Кнопка перехода назад в демонстрации
         {
             int[] toUpdateData = new int[History.Count];
             if (index > 0)
@@ -108,15 +114,23 @@ namespace SortingAlgorithm
                 GridForChart.UpdateLayout();
                 CreateChart(chart, toUpdateData);
             } else
-            {
-               MessageBoxResult res =  MessageBox.Show("График находится на начальном этапе сортировки" 
+            {          
+                GridForChart.Children.OfType<Canvas>().ToList().ForEach(p => GridForChart.Children.Remove(p));
+                Chart chart = new Visualization();
+                GridForChart.Children.Add(chart.ChartBackground);
+                GridForChart.UpdateLayout();
+                foreach (var item in History[0])
+                {
+                    chart.AddValue(item);
+                }
+                MessageBoxResult res = MessageBox.Show("График находится на начальном этапе сортировки"
                     , "Конец"
                     , MessageBoxButton.OK
                     , MessageBoxImage.Hand);
             }
             
         }
-        private void Forward(object sender, EventArgs Click)
+        private void Forward(object sender, EventArgs Click) // Кнопка перехода вперед по демонстрации
         {
             int[] toUpdateData = new int[History.Count];
             if (index + 1 < History.Count)
@@ -157,14 +171,10 @@ namespace SortingAlgorithm
                     {
                         ResetData();
                     }
-                } else
-                {
-                    ResetData();
                 }
-
             } 
         }
-        private void EndDemonstration(object sender, EventArgs e)
+        private void EndDemonstration(object sender, EventArgs e) // Завершение демонстрации
         {
             int[] toUpdateData = new int[History.Count];
             MessageBoxResult res = MessageBox.Show("Хотите закончить демонстрацию?"
@@ -195,7 +205,7 @@ namespace SortingAlgorithm
                 ResetData();
             }
         }
-        public void ResetData()
+        public void ResetData() // Перевод интерфейса в состояние по умолчанию
         {
             StartBtn.IsEnabled = false;
             StartBtn.Visibility = Visibility.Visible;
@@ -207,7 +217,7 @@ namespace SortingAlgorithm
             History.Clear();
             GridForChart.Children.Clear();
         }
-        private void WriteDownResult(int[] data)
+        private void WriteDownResult(int[] data) // Запись результата в файл
         {
             string[] text = new string[data.Length];
             SaveFileDialog newFile = new SaveFileDialog();
@@ -222,6 +232,7 @@ namespace SortingAlgorithm
                 File.WriteAllLines(newFile.FileName, text);
             }            
         }
+        // Функция открытия выбранного файла с набором чисел
         private void OpenFile(object sender, EventArgs Click)
         {
             string textFromFile, singleLine = "";
@@ -255,19 +266,36 @@ namespace SortingAlgorithm
                 CreateChart(chart, ConvertData(toSortArray));
             }
         }
-        private static void CreateChart(Chart chart, int[] List)
+        // Создания объекта типа chart и добавление его на диаграмму
+        private void CreateChart(Chart chart, int[] List)
         {
             chart.Clear();
             List<int> list = new List<int>();
-            for (int i = 0; i != List.Length; i++)
+            int[] comparable = new int[History.Count];
+            if (History.Count != 0)
             {
-                list.Add(List[i]);
-            }
-            for (int i = 0; i != list.Count; i++)
+                for (int i = 0; i != List.Length; i++)
+                {
+                    list.Add(List[i]);
+                    comparable[i] = History[History.Count - 1][i];
+                }
+                for (int i = 0; i != list.Count; i++)
+                {
+                    chart.AddValue(list[i], comparable);
+                }
+            } else
             {
-                chart.AddValue(list[i]);
+                for (int i = 0; i != List.Length; i++)
+                {
+                    list.Add(List[i]);
+                }
+                for (int i = 0; i != list.Count; i++)
+                {
+                    chart.AddValue(list[i]);
+                }
             }
         }
+        // Конвертация символьного массива в тип int 
         public int[] ConvertData(List<string> toConvertArr)
         {
             int[] data = new int[toSortArray.Count];
@@ -276,14 +304,19 @@ namespace SortingAlgorithm
                 if (toConvertArr[i] != "\n" && toConvertArr[i] != " ")
                 {
                     data[i] = Convert.ToInt32(toConvertArr[i]);
-                    //MessageBox.Show(Convert.ToString(data[i]));
                 }
             }
             return data;
         }
+        // справка
         private void ShowInfo(object sender, EventArgs Click)
         {
-            MessageBox.Show("КОНТЕНТ ДОРАБОТАТЬ", "Справочная информация", MessageBoxButton.OK);
+            MessageBox.Show("Демонстрационная программа метода сортировки " +
+                "'прямыми вставками с бинарным поиском'." +
+                "Пользователь должен выбрать файл с набором чисел, после чего произойдет сортировка, " +
+                "и пользователь сможет нажимать кнопки 'Назад' и 'Вперед', посматривая шаги сортировки алгоритма."
+                ,"Справочная информация"
+                , MessageBoxButton.OK);
         }
     }
 }
