@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
         xmlns:local="clr-namespace:SortingAlgorithm"
         mc:Ignorable="d"
         Title="Алгоритм сортировки бинарными вставками" Height="450" MinWidth="800" Width="800"  Background="#FBFBFC" ResizeMode="CanMinimize" Icon="./Icon.png">
@@ -30,8 +29,6 @@
             <Button x:Name="NextBtn" Background="#B8BAC6" Foreground="Black" FontSize="16px" Height="30" Width="75" Margin="10 0 0 5"  Content="Вперед" Visibility="Collapsed" IsEnabled="False" Click="Forward" />
             </StackPanel>
         </StackPanel>
-        <Grid Grid.Column="1" x:Name="GridForChart" Background="GhostWhite" Height="380" VerticalAlignment="Top" Margin="0 20 0 0">
-            
-        </Grid>
+        <Grid Grid.Column="1" x:Name="GridForChart" Background="GhostWhite" Height="380" VerticalAlignment="Top" Margin="0 20 0 0"/>
     </Grid>
 </Window>

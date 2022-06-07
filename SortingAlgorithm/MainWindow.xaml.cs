@@ -23,8 +23,6 @@ namespace SortingAlgorithm
     public partial class MainWindow : Window
     {
         int index, writtenDownAlready = 0;
-        public int[] green = new int[4] { 73, 245, 39, 1 };
-        public int[] orange = new int[4] { 188, 212, 36, 1};
         List<string> toSortArray = new List<string>();
         public List<List<int>> History = new List<List<int>>();
         public MainWindow()
@@ -247,26 +245,32 @@ namespace SortingAlgorithm
             {
                 textFromFile = File.ReadAllText(Conductor.FileName, Encoding.UTF8);
                 LoadedData.Text = textFromFile;
-                for (int i = 0; i != textFromFile.Length; i++)
+                if (LoadedData.Text != "")
                 {
-                    if (textFromFile[i] == '\n' || textFromFile[i] == '\0')
+                    for (int i = 0; i != textFromFile.Length; i++)
                     {
-                        toSortArray.Add(singleLine);
-                        singleLine = "";
-                        continue;
+                        if (textFromFile[i] == '\n' || textFromFile[i] == '\0')
+                        {
+                            toSortArray.Add(singleLine);
+                            singleLine = "";
+                            continue;
+                        }
+                        singleLine += textFromFile[i];
                     }
-                    singleLine += textFromFile[i];
+                    StartBtn.IsEnabled = true;
+                    StartBtn.Visibility = Visibility.Visible;
+                    BackBtn.Visibility = Visibility.Collapsed;
+                    NextBtn.Visibility = Visibility.Collapsed;
+                    // Обращение к визуализации
+                    GridForChart.Children.Clear();
+                    Chart chart = new Visualization();
+                    GridForChart.Children.Add(chart.ChartBackground);
+                    GridForChart.UpdateLayout();
+                    CreateChart(chart, ConvertData(toSortArray));
+                } else
+                {
+                    MessageBox.Show("Вы передали программе пустой файл!", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
-                StartBtn.IsEnabled = true;
-                StartBtn.Visibility = Visibility.Visible;
-                BackBtn.Visibility = Visibility.Collapsed;
-                NextBtn.Visibility = Visibility.Collapsed;
-                // Обращение к визуализации
-                GridForChart.Children.Clear();
-                Chart chart = new Visualization();
-                GridForChart.Children.Add(chart.ChartBackground);
-                GridForChart.UpdateLayout();
-                CreateChart(chart, ConvertData(toSortArray));
             }
         }
         // Создания объекта типа chart и добавление его на диаграмму
